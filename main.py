@@ -5,7 +5,7 @@ from models.lenet import LeNet
 from models.vgg import VGG
 from models.resnet import ResNet18, ResNet34, ResNet50, ResNet101, ResNet152
 from models.densenet import DenseNet121, DenseNet161, DenseNet169, DenseNet201
-
+from models.googlenet import GoogLeNet
 import torch
 import torch.nn as nn
 import torchvision
@@ -28,14 +28,17 @@ models = [
 (FullyConnectedNet([784,500,10]), 'FCN_784-500-10'),   
 (FullyConnectedNet([784,100,100,10]), 'FCN_784-100-100-10'),
 (FullyConnectedNet([784,500,500,10]), 'FCN_784-500-500-10'),
-(LeNet(), 'LeNet')     
+(ResNet18(), 'ResNet18'),
+(ResNet34(), 'ResNet34'),
+#(DenseNet121(), 'DenseNet121'),
+(GoogLeNet(), 'GoogLeNet')   
 ]
 
 
 
 
 
-device = 'cuda:0'
+device = 'cpu'
 for net, name in models:
     if not os.path.exists('./MResults/'+name):
         os.mkdir('./MResults/'+name)
@@ -51,6 +54,7 @@ for net, name in models:
     for epoch in range(10):  # loop over the dataset multiple times
         running_loss = 0.0
         for i, data in enumerate(train_loader, 0):
+            batch_start_time = time.time()
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = data[0].to(device), data[1].to(device)
             # zero the parameter gradients
@@ -62,6 +66,7 @@ for net, name in models:
             optimizer.step()
             # print statistics
             running_loss += loss.item()
+            print(f"Batch time:{time.time() - batch_start_time}")
             if i % 2000 == 1999:    # print every 2000 mini-batches
                 print('[%d, %5d] loss: %.3f' %
                     (epoch + 1, i + 1, running_loss / 2000))

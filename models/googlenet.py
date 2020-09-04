@@ -57,7 +57,7 @@ class GoogLeNet(nn.Module):
     def __init__(self):
         super(GoogLeNet, self).__init__()
         self.pre_layers = nn.Sequential(
-            nn.Conv2d(3, 192, kernel_size=3, padding=1),
+            nn.Conv2d(1, 192, kernel_size=3, padding=1), # channel changed to 1
             nn.BatchNorm2d(192),
             nn.ReLU(True),
         )
