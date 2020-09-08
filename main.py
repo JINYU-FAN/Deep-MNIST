@@ -31,18 +31,18 @@ models = [
 (ResNet18(), 'ResNet18'),
 (ResNet34(), 'ResNet34'),
 #(DenseNet121(), 'DenseNet121'),
-(GoogLeNet(), 'GoogLeNet')   
+#(GoogLeNet(), 'GoogLeNet')   
 ]
 
 
 
 
 
-device = 'cpu'
+device = 'cuda:0'
 for net, name in models:
-    if not os.path.exists('./MResults/'+name):
-        os.mkdir('./MResults/'+name)
-    if os.listdir('./MResults/'+name):
+    if not os.path.exists('./FMResults/'+name):
+        os.mkdir('./FMResults/'+name)
+    if os.listdir('./FMResults/'+name):
         print(f'Directory {name} is already occupied.')
         continue
     start_time = time.time()
@@ -54,7 +54,7 @@ for net, name in models:
     for epoch in range(10):  # loop over the dataset multiple times
         running_loss = 0.0
         for i, data in enumerate(train_loader, 0):
-            batch_start_time = time.time()
+            #batch_start_time = time.time()
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = data[0].to(device), data[1].to(device)
             # zero the parameter gradients
@@ -66,12 +66,12 @@ for net, name in models:
             optimizer.step()
             # print statistics
             running_loss += loss.item()
-            print(f"Batch time:{time.time() - batch_start_time}")
+            #print(f"Batch time:{time.time() - batch_start_time}")
             if i % 2000 == 1999:    # print every 2000 mini-batches
                 print('[%d, %5d] loss: %.3f' %
                     (epoch + 1, i + 1, running_loss / 2000))
                 running_loss = 0.0
-        output_hal = open(f"./MResults/{name}/epoch_{epoch+1}.pkl",'wb')
+        output_hal = open(f"./FMResults/{name}/epoch_{epoch+1}.pkl",'wb')
         str = pickle.dumps(net)
         output_hal.write(str)
         output_hal.close()
